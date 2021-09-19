@@ -11,7 +11,7 @@ Deno is very suitable for running scripts. It's a single executable, you don't h
 ## Usage
 ### CLI
 1. Install it: `deno --unstable install --allow-net --allow-read https://deno.land/x/overlord/cli.ts`
-2. Use it: `overlord -r https://deno.land/x/overlord/cli.ts/examples`
+2. Use it: `overlord -r https://deno.land/x/overlord/examples`
 3. Try it: `curl localhost:8080/hello_world.ts`
 
 ### Programatically
@@ -19,7 +19,7 @@ Deno is very suitable for running scripts. It's a single executable, you don't h
 import { Overlord } from "https://deno.land/x/overlord/mod.ts"
 
 const overlord = new Overlord({
-    rootPath: "https://deno.land/x/overlord/cli.ts/examples",
+    rootPath: "https://deno.land/x/overlord/examples",
     port: 5000,
 });
 

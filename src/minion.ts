@@ -40,7 +40,7 @@ export class Minion {
 
   #payloadToHttpResponse(payload: ResponsePayload) {
     return {
-      body: JSON.stringify(payload.body),
+      body: typeof payload.body === "string" ? payload.body : JSON.stringify(payload.body),
       status: payload.status,
       headers: new Headers(payload.headers),
       statusText: payload.statusText,

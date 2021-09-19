@@ -38,6 +38,12 @@ Deno.test("[Minion] should handle response codes", async () => {
   assertEquals(calledWithArgs.status, 201);
 });
 
+Deno.test("[Minion] should handle text responses", async () => {
+  const calledWithArgs = await testMinion("../mocks/runnable_text.ts");
+  assertEquals(calledWithArgs.status, 200);
+  assertEquals(calledWithArgs.body, "<foo>bar</foo>");
+});
+
 Deno.test("[Minion] should handle errors in the worker", async () => {
   const calledWithArgs = await testMinion("../mocks/runnable_throws.ts");
   assertEquals(calledWithArgs.status, 500);

@@ -13,8 +13,6 @@ const args = parse(Deno.args, {
   },
 });
 
-console.log(args)
-
 if (args.help) {
   console.log("A runner for your scripts so you don't have to deploy them. 🚀");
   console.log();

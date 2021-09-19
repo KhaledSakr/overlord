@@ -1,5 +1,5 @@
 import { HttpPayload } from "../types.ts";
-import { isResponse } from "./response.ts";
+import { isResponse, Response } from "./response.ts";
 
 declare global {
   interface Window {
@@ -18,7 +18,7 @@ const importAndRunModule = async (
     const res = await mod.run(event.data.data);
     await self.postMessage({
       type: "response",
-      payload: isResponse(res) ? res.toObject() : res,
+      payload: isResponse(res) ? res.toObject() : new Response(res).toObject(),
     });
   } catch (err) {
     await self.postMessage({
