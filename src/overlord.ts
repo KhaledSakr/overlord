@@ -83,7 +83,9 @@ export class Overlord {
     logger.info(`Started Overlord server at port ${port}`);
 
     const opts = this.#opts;
-    const resolveUrl = isRootPathType(opts) ? (url: string) => opts.rootPath + url : (url: string) => opts.urlMap[url];
+    const resolveUrl = isRootPathType(opts)
+      ? (url: string) => opts.rootPath + url
+      : (url: string) => opts.urlMap[url];
 
     const dispatcher = new Dispatcher({
       size: minionPoolSize,
@@ -111,7 +113,10 @@ export class Overlord {
       };
 
       const errorHandler = () => {
-        request.respond({ status: 500, statusText: "Ouch! That went unhandled." });
+        request.respond({
+          status: 500,
+          statusText: "Ouch! That went unhandled.",
+        });
       };
 
       dispatcher.addMission(mission, errorHandler);

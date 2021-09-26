@@ -12,7 +12,7 @@ export interface Payload<T = unknown> {
 export interface MinionInstructions {
   timeout: number;
   logger: Logger;
-  workerPath?: string,
+  workerPath?: string;
 }
 
 export interface WorkOrder {
@@ -28,7 +28,8 @@ export class Minion {
   constructor(instructions: MinionInstructions) {
     this.#timeout = instructions.timeout;
     this.#logger = instructions.logger;
-    this.#workerUrl = new URL(instructions.workerPath ?? "./worker.ts", import.meta.url).href;
+    this.#workerUrl =
+      new URL(instructions.workerPath ?? "./worker.ts", import.meta.url).href;
   }
 
   async #handleTimout(request: ServerRequest): Promise<void> {
@@ -40,11 +41,13 @@ export class Minion {
 
   #payloadToHttpResponse(payload: ResponsePayload) {
     return {
-      body: typeof payload.body === "string" ? payload.body : JSON.stringify(payload.body),
+      body: typeof payload.body === "string"
+        ? payload.body
+        : JSON.stringify(payload.body),
       status: payload.status,
       headers: new Headers(payload.headers),
       statusText: payload.statusText,
-    }
+    };
   }
 
   async #handleMessage(
@@ -52,12 +55,15 @@ export class Minion {
     event: MessageEvent,
   ): Promise<void> {
     if (event.data.type === "error") {
-      const error = event.data.payload as string
-      if (error.includes('Cannot resolve module') || error.includes('404')) {
+      const error = event.data.payload as string;
+      if (error.includes("Cannot resolve module") || error.includes("404")) {
         this.#logger.error("Worker script could not be resolved: " + error);
-        return this.#handleError(request, 404)
+        return this.#handleError(request, 404);
       } else {
-        this.#logger.error("An error occurred in the worker:", event.data.payload);
+        this.#logger.error(
+          "An error occurred in the worker:",
+          event.data.payload,
+        );
         return this.#handleError(request);
       }
     }

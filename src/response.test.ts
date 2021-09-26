@@ -35,8 +35,13 @@ Deno.test("[Response] should understand custom statuses", () => {
 });
 
 Deno.test("[Response] should be convertable to plain object", () => {
-  const res = new Response("<foo><bar>Hello</bar></foo>", { headers: { authorization: 'Bearer 123' } });
-  const obj = res.toObject()
-  assertEquals(obj.body, "<foo><bar>Hello</bar></foo>")
-  assertEquals(Object.values(obj).every(val => typeof val !== 'function'), true)
+  const res = new Response("<foo><bar>Hello</bar></foo>", {
+    headers: { authorization: "Bearer 123" },
+  });
+  const obj = res.toObject();
+  assertEquals(obj.body, "<foo><bar>Hello</bar></foo>");
+  assertEquals(
+    Object.values(obj).every((val) => typeof val !== "function"),
+    true,
+  );
 });
