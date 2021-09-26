@@ -2,7 +2,9 @@ scripts:
   test: deno --unstable test --allow-net --allow-read
   cli: deno --unstable run --allow-net --allow-read cli.ts
   compile: deno --unstable compile --allow-net --allow-read mod.ts
+  fmt: deno fmt
   coverage:
     - rm -rf cov_profile
     - deno --unstable test --allow-net --allow-read --coverage=cov_profile
     - deno coverage cov_profile
+    - deno coverage cov_profile --lcov > cov_profile.lcov

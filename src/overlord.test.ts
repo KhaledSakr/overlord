@@ -77,7 +77,10 @@ Deno.test("[Overlord] should handle errors reported by dispatcher", async () => 
     throw new Error("an error");
   };
   await overlord.start();
-  const result = await fetch("http://localhost:4000/hello", { method: "POST", signal: controller.signal });
+  const result = await fetch("http://localhost:4000/hello", {
+    method: "POST",
+    signal: controller.signal,
+  });
   assertEquals(result.status, 500);
   await result.body?.cancel();
   overlord.stop();
