@@ -41,6 +41,9 @@ const overlord = new Overlord({
 overlord.start();
 ```
 
+### Documentation
+See the full documentation [here](https://doc.deno.land/https/deno.land/x/overlord/mod.ts#BaseOverlordOptions).
+
 ## Features
 
 1. Zero dependancies (unless you count deno std).

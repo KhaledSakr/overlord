@@ -39,7 +39,7 @@ if (args.help) {
     " -a, --appendFileExtension   A file extension to append to request URLS",
   );
   console.log();
-  console.log("For more info, visit: ");
+  console.log("For more info, visit: https://doc.deno.land/https/deno.land/x/overlord/mod.ts#BaseOverlordOptions");
 } else {
   if (!args.rootPath) {
     console.error("A rootPath has to be specified.");
