@@ -35,6 +35,30 @@ Deno.test("[Overlord] [rootPath] should send orders to minions with correct url"
   const result = await fetch("http://localhost:4000/hello", { method: "POST" });
   await result.body?.cancel();
   assertEquals(takeOrderCalledWithArgs.length, 1);
+  assertEquals(takeOrderCalledWithArgs[0].url, "./mocks/hello.ts");
+  overlord.stop();
+});
+
+Deno.test("[Overlord] [rootPath] should send orders to minions with correct url when modifying appendFileExtension", async () => {
+  const overlord = new Overlord({
+    port: 4000,
+    rootPath: "./mocks",
+    logLevel: "CRITICAL",
+    appendFileExtension: "",
+  });
+  const takeOrderCalledWithArgs: WorkOrder[] = [];
+  overlord.createMinion = (opts) => {
+    const minion = new Minion(opts);
+    minion.doWork = async (order) => {
+      takeOrderCalledWithArgs.push(order);
+      await order.request.respond({ status: 200 });
+    };
+    return minion;
+  };
+  await overlord.start();
+  const result = await fetch("http://localhost:4000/hello", { method: "POST" });
+  await result.body?.cancel();
+  assertEquals(takeOrderCalledWithArgs.length, 1);
   assertEquals(takeOrderCalledWithArgs[0].url, "./mocks/hello");
   overlord.stop();
 });

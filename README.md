@@ -26,7 +26,7 @@ these scripts remotely.
 1. Install it:
    `deno --unstable install --allow-net --allow-read https://deno.land/x/overlord/cli.ts`
 2. Use it: `overlord -r https://deno.land/x/overlord/examples`
-3. Try it: `curl localhost:8080/hello_world.ts`
+3. Try it: `curl localhost:8080/hello_world`
 
 ### Programatically
 

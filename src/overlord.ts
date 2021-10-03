@@ -20,8 +20,7 @@ export interface BaseOverlordOptions {
    */
   logLevel?: LogLevel;
   /**
-   * An optional logger to override the default logger.
-   * @default INFO
+   * An optional logger to override the default logger used by Overlord.
    */
   logger?: Logger;
   /**
@@ -40,6 +39,14 @@ export interface OverlordRootPathOptions extends BaseOverlordOptions {
    * a path in the local file system.
    */
   rootPath: string;
+  /**
+   * A file extension to append to request URLS. This allows you to request localhost:8080/hello_world
+   * instead of localhost:8080/hello_world.ts. If you use .js files, make sure to change this to `.js`.
+   * To avoid appending any value at all, use an empty string.
+   * For more advanced use cases, use `urlMap` instead.
+   * @default .ts
+   */
+  appendFileExtension?: string;
 }
 
 export interface OverlordURLMapOptions extends BaseOverlordOptions {
@@ -84,7 +91,8 @@ export class Overlord {
 
     const opts = this.#opts;
     const resolveUrl = isRootPathType(opts)
-      ? (url: string) => opts.rootPath + url
+      ? (url: string) =>
+        opts.rootPath + url + (opts.appendFileExtension ?? ".ts")
       : (url: string) => opts.urlMap[url];
 
     const dispatcher = new Dispatcher({
