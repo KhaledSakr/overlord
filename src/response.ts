@@ -23,9 +23,7 @@ export class Response implements ResponsePayload {
     this.status = options?.status ?? 200;
     this.statusText = options?.statusText;
     this.headers = {
-      "content-type": typeof body === "string"
-        ? "text/html"
-        : "application/json",
+      "content-type": typeof body === "string" ? "text/html" : "application/json",
       ...options?.headers,
     };
   }

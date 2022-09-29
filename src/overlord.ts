@@ -91,8 +91,7 @@ export class Overlord {
 
     const opts = this.#opts;
     const resolveUrl = isRootPathType(opts)
-      ? (url: string) =>
-        opts.rootPath + url + (opts.appendFileExtension ?? ".ts")
+      ? (url: string) => opts.rootPath + url + (opts.appendFileExtension ?? ".ts")
       : (url: string) => opts.urlMap[url];
 
     const dispatcher = new Dispatcher({

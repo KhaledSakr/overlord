@@ -28,8 +28,7 @@ export class Minion {
   constructor(instructions: MinionInstructions) {
     this.#timeout = instructions.timeout;
     this.#logger = instructions.logger;
-    this.#workerUrl =
-      new URL(instructions.workerPath ?? "./worker.ts", import.meta.url).href;
+    this.#workerUrl = new URL(instructions.workerPath ?? "./worker.ts", import.meta.url).href;
   }
 
   async #handleTimout(request: ServerRequest): Promise<void> {
@@ -41,9 +40,7 @@ export class Minion {
 
   #payloadToHttpResponse(payload: ResponsePayload) {
     return {
-      body: typeof payload.body === "string"
-        ? payload.body
-        : JSON.stringify(payload.body),
+      body: typeof payload.body === "string" ? payload.body : JSON.stringify(payload.body),
       status: payload.status,
       headers: new Headers(payload.headers),
       statusText: payload.statusText,
