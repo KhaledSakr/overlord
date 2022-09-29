@@ -1,14 +1,8 @@
+/// <reference no-default-lib="true" />
+/// <reference lib="deno.worker" />
+
 import { HttpPayload } from "../types.ts";
 import { isResponse, Response } from "./response.ts";
-
-declare global {
-  interface Window {
-    onmessage: (
-      event: MessageEvent<{ data: HttpPayload; url: string }>,
-    ) => void;
-    postMessage: (message: unknown) => Promise<void>;
-  }
-}
 
 const importAndRunModule = async (
   event: MessageEvent<{ data: HttpPayload; url: string }>,
