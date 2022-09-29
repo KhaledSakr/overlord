@@ -55,7 +55,7 @@ export class Minion {
   ): Promise<void> {
     if (event.data.type === "error") {
       const error = event.data.payload as string;
-      if (error.includes("Cannot resolve module") || error.includes("404")) {
+      if (error.includes("Module not found") || error.includes("404")) {
         this.#logger.error("Worker script could not be resolved: " + error);
         return this.#handleError(request, 404);
       } else {
