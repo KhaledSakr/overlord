@@ -1,7 +1,7 @@
-import { assertEquals } from "./deps_test.ts";
+import { assertEquals } from "dev/testing/asserts.ts";
+import { getLogger } from "log/mod.ts";
 import { Overlord } from "./overlord.ts";
 import { Minion, WorkOrder } from "./minion.ts";
-import { getLogger } from "./deps.ts";
 
 Deno.test("[Overlord] should create minions", () => {
   const overlord = new Overlord({

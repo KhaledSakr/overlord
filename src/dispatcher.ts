@@ -1,4 +1,4 @@
-import { Logger } from "./deps.ts";
+import { Logger } from "log/mod.ts";
 
 export interface DispatcherInstructions {
   size: number;

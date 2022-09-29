@@ -1,6 +1,7 @@
+import { assertEquals } from "dev/testing/asserts.ts";
+import { StringReader } from "io/readers.ts";
+import { Response, ServerRequest } from "http/server.ts";
 import { parseBody } from "./utils.ts";
-import { Response, ServerRequest } from "./deps.ts";
-import { assertEquals, StringReader } from "./deps_test.ts";
 
 class MockRequest extends ServerRequest {
   respond(_: Response) {

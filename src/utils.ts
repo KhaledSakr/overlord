@@ -1,4 +1,5 @@
-import { readAll, ServerRequest } from "./deps.ts";
+import { ServerRequest } from "http/server.ts";
+import { readAll } from "io/util.ts";
 
 const dec = new TextDecoder();
 

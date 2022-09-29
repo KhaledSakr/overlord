@@ -1,5 +1,7 @@
-import { assertEquals, StringReader } from "./deps_test.ts";
-import { getLogger, Response, ServerRequest } from "./deps.ts";
+import { assertEquals } from "dev/testing/asserts.ts";
+import { StringReader } from "io/readers.ts";
+import { getLogger } from "log/mod.ts";
+import { Response, ServerRequest } from "http/server.ts";
 import { Minion } from "./minion.ts";
 
 const logger = getLogger("test");

@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "http/": "https://deno.land/std@0.102.0/http/",
+    "log/": "https://deno.land/std@0.102.0/log/",
+    "io/": "https://deno.land/std@0.102.0/io/",
+    "flags/": "https://deno.land/std@0.102.0/flags/",
+
+    "dev/testing/": "https://deno.land/std@0.103.0/testing/",
+    "dev/async/": "https://deno.land/std@0.103.0/async/"
+  }
+}

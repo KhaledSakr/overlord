@@ -1,4 +1,5 @@
-import { getLogger, handlers, LevelName, Logger, LogRecord, setup } from "./deps.ts";
+import { getLogger, handlers, LevelName, Logger, setup } from "log/mod.ts";
+import { LogRecord } from "log/logger.ts";
 
 export type LogLevel = LevelName;
 

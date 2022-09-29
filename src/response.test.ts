@@ -1,5 +1,5 @@
+import { assertEquals } from "dev/testing/asserts.ts";
 import { isResponse, Response } from "./response.ts";
-import { assertEquals } from "./deps_test.ts";
 
 Deno.test("[Response] [isResponse] should return true if object is an instance of response", () => {
   const res = new Response({});

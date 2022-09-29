@@ -1,4 +1,4 @@
-import { parse } from "./src/deps.ts";
+import { parse } from "flags/mod.ts";
 import { Overlord, OverlordOptions } from "./mod.ts";
 
 const args = parse(Deno.args, {

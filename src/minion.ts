@@ -1,6 +1,7 @@
 /// <reference lib="deno.unstable" />
 
-import { Logger, ServerRequest } from "./deps.ts";
+import { Logger } from "log/mod.ts";
+import { ServerRequest } from "http/server.ts";
 import { parseBody } from "./utils.ts";
 import { ResponsePayload } from "./response.ts";
 

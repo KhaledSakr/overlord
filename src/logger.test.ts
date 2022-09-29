@@ -1,5 +1,6 @@
-import { Logger, LogRecord } from "./deps.ts";
-import { assertEquals, assertStringIncludes } from "./deps_test.ts";
+import { Logger } from "log/mod.ts";
+import { LogRecord } from "log/logger.ts";
+import { assertEquals, assertStringIncludes } from "dev/testing/asserts.ts";
 import { createLogger, formatter } from "./logger.ts";
 
 Deno.test("[Logger] [formatter] should correctly format log records", () => {

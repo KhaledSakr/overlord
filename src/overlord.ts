@@ -1,5 +1,6 @@
 import { createLogger, LogLevel } from "./logger.ts";
-import { Logger, serve, Server } from "./deps.ts";
+import { Logger } from "log/mod.ts";
+import { serve, Server } from "http/server.ts";
 import { Dispatcher } from "./dispatcher.ts";
 import { Minion, MinionInstructions } from "./minion.ts";
 

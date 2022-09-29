@@ -1,6 +1,7 @@
-import { assertEquals, delay } from "./deps_test.ts";
+import { delay } from "dev/async/delay.ts";
+import { assertEquals } from "dev/testing/asserts.ts";
 import { Dispatcher, Mission } from "./dispatcher.ts";
-import { getLogger } from "./deps.ts";
+import { getLogger } from "log/mod.ts";
 
 const logger = getLogger("test");
 
