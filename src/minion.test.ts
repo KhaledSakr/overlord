@@ -16,7 +16,7 @@ class MockRequest extends Request {
 const testMinion = (url: string, workerPath?: string) => {
   const minion = new Minion({
     logger,
-    timeout: 1000,
+    timeout: 5000,
     workerPath,
   });
   const request = new MockRequest("http://localhost:4000", {
