@@ -8,7 +8,7 @@ Deno.test("[utils] [parseBody] should handle JSON bodies", async () => {
       "authorization": "Bearer 123",
     }),
     body: "{}",
-    method: 'POST',
+    method: "POST",
   });
   const body = await parseBody(request);
   assertEquals(body, {});
@@ -20,7 +20,7 @@ Deno.test("[utils] [parseBody] should handle string bodies", async () => {
       "authorization": "Bearer 123",
     }),
     body: "{}",
-    method: 'POST',
+    method: "POST",
   });
   const body = await parseBody(request);
   assertEquals(body, "{}");

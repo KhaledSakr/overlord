@@ -16,7 +16,7 @@ jobs:
     - uses: denoland/setup-deno@v1
       with:
         deno-version: v1.26.0
-    - run: deno task fmt
+    - run: deno task lint
     - run: deno task coverage
     - uses: codecov/codecov-action@v2
       with:
