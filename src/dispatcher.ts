@@ -1,8 +1,5 @@
-import { Logger } from "log/mod.ts";
-
 export interface DispatcherInstructions {
   size: number;
-  logger: Logger;
 }
 
 export type Mission = () => Promise<void>;
@@ -10,17 +7,15 @@ export type ErrorHandler = (err: Error) => void;
 
 export class Dispatcher {
   #size: Readonly<number>;
-  #queue: [Mission, ErrorHandler][] = [];
+  #queue: Mission[] = [];
   #utilization = 0;
-  #logger: Logger;
 
   constructor(instructions: DispatcherInstructions) {
     this.#size = instructions.size;
-    this.#logger = instructions.logger;
   }
 
-  addMission(mission: Mission, errorHandler: ErrorHandler): void {
-    this.#queue.push([mission, errorHandler]);
+  addMission(mission: Mission): void {
+    this.#queue.push(mission);
     this.#processQueue();
   }
 
@@ -29,20 +24,14 @@ export class Dispatcher {
       return;
     }
 
-    const [mission, errorHandler] = this.#queue.shift()!;
-    this.#execute(mission, errorHandler);
+    const mission = this.#queue.shift()!;
+    this.#execute(mission);
   }
 
-  async #execute(mission: Mission, errorHandler: ErrorHandler): Promise<void> {
+  async #execute(mission: Mission): Promise<void> {
     this.#utilization++;
-    try {
-      await mission();
-    } catch (err) {
-      this.#logger.error(`An error occurred while executing`, err);
-      errorHandler(err);
-    } finally {
-      this.#utilization--;
-      this.#processQueue();
-    }
+    await mission();
+    this.#utilization--;
+    this.#processQueue();
   }
 }

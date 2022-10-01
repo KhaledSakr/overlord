@@ -94,7 +94,6 @@ export class Overlord {
 
     const dispatcher = new Dispatcher({
       size: minionPoolSize,
-      logger,
     });
 
     const handler = (request: Request): Promise<Response> => {
@@ -109,20 +108,21 @@ export class Overlord {
             logger,
             timeout: this.#opts.timeout ?? 10000,
           });
-          const res = await minion.doWork({ request, url });
-          resolve(res);
+          try {
+            const res = await minion.doWork({ request, url });
+            resolve(res);
+          } catch (err) {
+            logger.error(`An error occurred while executing`, err);
+            resolve(
+              new Response(null, {
+                status: 500,
+                statusText: "Ouch! That went unhandled.",
+              }),
+            );
+          }
         };
 
-        const errorHandler = () => {
-          resolve(
-            new Response(null, {
-              status: 500,
-              statusText: "Ouch! That went unhandled.",
-            }),
-          );
-        };
-
-        dispatcher.addMission(mission, errorHandler);
+        dispatcher.addMission(mission);
       });
     };
 

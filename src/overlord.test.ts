@@ -88,7 +88,7 @@ Deno.test("[Overlord] [urlMap] should send orders to minions with correct url", 
   await overlord.stop();
 });
 
-Deno.test("[Overlord] should handle errors reported by dispatcher", async () => {
+Deno.test("[Overlord] should handle execution errors", async () => {
   const overlord = new Overlord({
     port: 4000,
     urlMap: {
@@ -96,14 +96,17 @@ Deno.test("[Overlord] should handle errors reported by dispatcher", async () => 
     },
     logLevel: "CRITICAL",
   });
-  const controller = new AbortController();
   overlord.createMinion = () => {
-    throw new Error("an error");
+    return {
+      doWork: () =>
+        new Promise((_, reject) => {
+          reject(new Error("an error"));
+        }),
+    } as unknown as Minion;
   };
   overlord.start();
   const result = await fetch("http://localhost:4000/hello", {
     method: "POST",
-    signal: controller.signal,
   });
   assertEquals(result.status, 500);
   await result.body?.cancel();

@@ -1,9 +1,6 @@
 import { delay } from "dev/async/delay.ts";
 import { assertEquals } from "dev/testing/asserts.ts";
 import { Dispatcher, Mission } from "./dispatcher.ts";
-import { getLogger } from "log/mod.ts";
-
-const logger = getLogger("test");
 
 const createMockMission = (): {
   mission: Mission;
@@ -24,7 +21,7 @@ const createMockMission = (): {
 };
 
 Deno.test("[Dispatcher] should properly queue missions", async () => {
-  const dispatcher = new Dispatcher({ size: 1, logger });
+  const dispatcher = new Dispatcher({ size: 1 });
 
   const {
     mission: firstMission,
@@ -37,14 +34,14 @@ Deno.test("[Dispatcher] should properly queue missions", async () => {
     calledTimes: secondMissionCalledTimes,
   } = createMockMission();
 
-  dispatcher.addMission(firstMission, () => {});
+  dispatcher.addMission(firstMission);
   assertEquals(
     firstMissionCalledTimes(),
     1,
     "first mission should be called once",
   );
 
-  dispatcher.addMission(secondMission, () => {});
+  dispatcher.addMission(secondMission);
   assertEquals(
     secondMissionCalledTimes(),
     0,
@@ -61,7 +58,7 @@ Deno.test("[Dispatcher] should properly queue missions", async () => {
 });
 
 Deno.test("[Dispatcher] should execute multiple missions in parallel if size allows", () => {
-  const dispatcher = new Dispatcher({ size: 2, logger });
+  const dispatcher = new Dispatcher({ size: 2 });
   const {
     mission: firstMission,
     calledTimes: firstMissionCalledTimes,
@@ -72,36 +69,17 @@ Deno.test("[Dispatcher] should execute multiple missions in parallel if size all
     calledTimes: secondMissionCalledTimes,
   } = createMockMission();
 
-  dispatcher.addMission(firstMission, () => {});
+  dispatcher.addMission(firstMission);
   assertEquals(
     firstMissionCalledTimes(),
     1,
     "first mission should be called once",
   );
 
-  dispatcher.addMission(secondMission, () => {});
+  dispatcher.addMission(secondMission);
   assertEquals(
     secondMissionCalledTimes(),
     1,
     "second mission should be called once",
   );
-});
-
-Deno.test("[Dispatcher] should log errors", async () => {
-  let errorCalled = false;
-  const testLogger = {
-    ...logger,
-    error: () => errorCalled = true,
-  } as unknown as typeof logger;
-  const dispatcher = new Dispatcher({ size: 1, logger: testLogger });
-  let errorHandlerCalled = false;
-  const mission = () => {
-    return Promise.reject(new Error("an error"));
-  };
-  const errorHandler = () => {
-    errorHandlerCalled = true;
-  };
-  await dispatcher.addMission(mission, errorHandler);
-  assertEquals(errorCalled, true);
-  assertEquals(errorHandlerCalled, true);
 });
