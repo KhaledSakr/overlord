@@ -25,18 +25,18 @@ Deno.test("[Overlord] [rootPath] should send orders to minions with correct url"
   const takeOrderCalledWithArgs: WorkOrder[] = [];
   overlord.createMinion = (opts) => {
     const minion = new Minion(opts);
-    minion.doWork = async (order) => {
+    minion.doWork = (order) => {
       takeOrderCalledWithArgs.push(order);
-      await order.request.respond({ status: 200 });
+      return Promise.resolve(new Response(null, { status: 200 }));
     };
     return minion;
   };
-  await overlord.start();
+  overlord.start();
   const result = await fetch("http://localhost:4000/hello", { method: "POST" });
   await result.body?.cancel();
   assertEquals(takeOrderCalledWithArgs.length, 1);
   assertEquals(takeOrderCalledWithArgs[0].url, "./mocks/hello.ts");
-  overlord.stop();
+  await overlord.stop();
 });
 
 Deno.test("[Overlord] [rootPath] should send orders to minions with correct url when modifying appendFileExtension", async () => {
@@ -49,18 +49,18 @@ Deno.test("[Overlord] [rootPath] should send orders to minions with correct url 
   const takeOrderCalledWithArgs: WorkOrder[] = [];
   overlord.createMinion = (opts) => {
     const minion = new Minion(opts);
-    minion.doWork = async (order) => {
+    minion.doWork = (order) => {
       takeOrderCalledWithArgs.push(order);
-      await order.request.respond({ status: 200 });
+      return Promise.resolve(new Response(null, { status: 200 }));
     };
     return minion;
   };
-  await overlord.start();
+  overlord.start();
   const result = await fetch("http://localhost:4000/hello", { method: "POST" });
   await result.body?.cancel();
   assertEquals(takeOrderCalledWithArgs.length, 1);
   assertEquals(takeOrderCalledWithArgs[0].url, "./mocks/hello");
-  overlord.stop();
+  await overlord.stop();
 });
 
 Deno.test("[Overlord] [urlMap] should send orders to minions with correct url", async () => {
@@ -74,18 +74,18 @@ Deno.test("[Overlord] [urlMap] should send orders to minions with correct url", 
   const takeOrderCalledWithArgs: WorkOrder[] = [];
   overlord.createMinion = (opts) => {
     const minion = new Minion(opts);
-    minion.doWork = async (order) => {
+    minion.doWork = (order) => {
       takeOrderCalledWithArgs.push(order);
-      await order.request.respond({ status: 200 });
+      return Promise.resolve(new Response(null, { status: 200 }));
     };
     return minion;
   };
-  await overlord.start();
+  overlord.start();
   const result = await fetch("http://localhost:4000/hello", { method: "POST" });
   await result.body?.cancel();
   assertEquals(takeOrderCalledWithArgs.length, 1);
   assertEquals(takeOrderCalledWithArgs[0].url, "http://localhost:5000/world");
-  overlord.stop();
+  await overlord.stop();
 });
 
 Deno.test("[Overlord] should handle errors reported by dispatcher", async () => {
@@ -100,12 +100,12 @@ Deno.test("[Overlord] should handle errors reported by dispatcher", async () => 
   overlord.createMinion = () => {
     throw new Error("an error");
   };
-  await overlord.start();
+  overlord.start();
   const result = await fetch("http://localhost:4000/hello", {
     method: "POST",
     signal: controller.signal,
   });
   assertEquals(result.status, 500);
   await result.body?.cancel();
-  overlord.stop();
+  await overlord.stop();
 });

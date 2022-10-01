@@ -1,70 +1,63 @@
 import { assertEquals } from "dev/testing/asserts.ts";
-import { StringReader } from "io/readers.ts";
 import { getLogger } from "log/mod.ts";
-import { Response, ServerRequest } from "http/server.ts";
 import { Minion } from "./minion.ts";
 
 const logger = getLogger("test");
 
-class MockRequest extends ServerRequest {
+class MockRequest extends Request {
   respond(_: Response) {
     return Promise.resolve();
   }
-  get body(): Deno.Reader {
-    return new StringReader("{}");
+  json(): Promise<string> {
+    return Promise.resolve("{}");
   }
 }
 
-const testMinion = async (url: string, workerPath?: string) => {
+const testMinion = (url: string, workerPath?: string) => {
   const minion = new Minion({
     logger,
-    timeout: 10000,
+    timeout: 1000,
     workerPath,
   });
-  const request = new MockRequest();
-  request.headers = new Headers({ "content-type": "application/json" });
-  let calledWithArgs: Response | null = null;
-  request.respond = (args) => {
-    calledWithArgs = args;
-    return Promise.resolve();
-  };
-  await minion.doWork({
+  const request = new MockRequest("http://localhost:4000", {
+    headers: new Headers({ "content-type": "application/json" }),
+  });
+  return minion.doWork({
     url,
     request,
   });
-  return calledWithArgs!;
 };
 
 Deno.test("[Minion] should handle response codes", async () => {
-  const calledWithArgs = await testMinion("../mocks/runnable_response.ts");
-  assertEquals(calledWithArgs.status, 201);
+  const response = await testMinion("../mocks/runnable_response.ts");
+  assertEquals(response.status, 201);
 });
 
 Deno.test("[Minion] should handle text responses", async () => {
-  const calledWithArgs = await testMinion("../mocks/runnable_text.ts");
-  assertEquals(calledWithArgs.status, 200);
-  assertEquals(calledWithArgs.body, "<foo>bar</foo>");
+  const response = await testMinion("../mocks/runnable_text.ts");
+  assertEquals(response.status, 200);
+  assertEquals(await response.text(), "<foo>bar</foo>");
 });
 
 Deno.test("[Minion] should handle errors in the worker", async () => {
-  const calledWithArgs = await testMinion("../mocks/runnable_throws.ts");
-  assertEquals(calledWithArgs.status, 500);
+  const response = await testMinion("../mocks/runnable_throws.ts");
+  assertEquals(response.status, 500);
 });
 
 Deno.test("[Minion] should handle worker timeout", async () => {
-  const calledWithArgs = await testMinion("../mocks/runnable_timeout.ts");
-  assertEquals(calledWithArgs.status, 408);
+  const response = await testMinion("../mocks/runnable_timeout.ts");
+  assertEquals(response.status, 408);
 });
 
 Deno.test("[Minion] should handle non-existant urls", async () => {
-  const calledWithArgs = await testMinion("../mocks/runnable_xyz.ts");
-  assertEquals(calledWithArgs.status, 404);
+  const response = await testMinion("../mocks/runnable_xyz.ts");
+  assertEquals(response.status, 404);
 });
 
 Deno.test("[Minion] should handle worker errors", async () => {
-  const calledWithArgs = await testMinion(
+  const response = await testMinion(
     "../mocks/runnable_xyz.ts",
     "../mocks/worker_faulty.ts",
   );
-  assertEquals(calledWithArgs.status, 500);
+  assertEquals(response.status, 500);
 });

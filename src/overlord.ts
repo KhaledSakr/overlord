@@ -1,6 +1,6 @@
 import { createLogger, LogLevel } from "./logger.ts";
 import { Logger } from "log/mod.ts";
-import { serve, Server } from "http/server.ts";
+import { Server } from "http/server.ts";
 import { Dispatcher } from "./dispatcher.ts";
 import { Minion, MinionInstructions } from "./minion.ts";
 
@@ -69,6 +69,7 @@ function isRootPathType(
 export class Overlord {
   #opts: OverlordOptions;
   #server?: Server;
+  #serverStartPromise?: Promise<void>;
 
   constructor(opts: OverlordOptions) {
     this.#opts = opts;
@@ -84,11 +85,7 @@ export class Overlord {
       logger: customLogger,
     } = this.#opts;
 
-    const logger = customLogger ?? await createLogger(logLevel);
-
-    this.#server = serve({ port });
-
-    logger.info(`Started Overlord server at port ${port}`);
+    const logger = customLogger ?? createLogger(logLevel);
 
     const opts = this.#opts;
     const resolveUrl = isRootPathType(opts)
@@ -100,38 +97,45 @@ export class Overlord {
       logger,
     });
 
-    this.#processRequests(dispatcher, logger, resolveUrl);
-  }
+    const handler = (request: Request): Promise<Response> => {
+      const requestUrl = new URL(request.url);
+      const url = resolveUrl(requestUrl.pathname);
 
-  async #processRequests(
-    dispatcher: Dispatcher,
-    logger: Logger,
-    resolveUrl: (url: string) => string,
-  ): Promise<void> {
-    for await (const request of this.#server!) {
-      const url = resolveUrl(request.url);
       logger.info(`Received a request for URL: ${url}`);
 
-      const mission = async () => {
-        const minion = this.createMinion({
-          logger,
-          timeout: this.#opts.timeout ?? 10000,
-        });
-        await minion.doWork({ request, url });
-      };
+      return new Promise<Response>((resolve) => {
+        const mission = async () => {
+          const minion = this.createMinion({
+            logger,
+            timeout: this.#opts.timeout ?? 10000,
+          });
+          const res = await minion.doWork({ request, url });
+          resolve(res);
+        };
 
-      const errorHandler = () => {
-        request.respond({
-          status: 500,
-          statusText: "Ouch! That went unhandled.",
-        });
-      };
+        const errorHandler = () => {
+          resolve(
+            new Response(null, {
+              status: 500,
+              statusText: "Ouch! That went unhandled.",
+            }),
+          );
+        };
 
-      dispatcher.addMission(mission, errorHandler);
-    }
+        dispatcher.addMission(mission, errorHandler);
+      });
+    };
+
+    this.#server = new Server({ port, handler });
+
+    logger.info(`Started Overlord server at port ${port}`);
+
+    this.#serverStartPromise = this.#server.listenAndServe();
+    await this.#serverStartPromise;
   }
 
-  stop(): void {
+  async stop(): Promise<void> {
     this.#server?.close();
+    await this.#serverStartPromise;
   }
 }
